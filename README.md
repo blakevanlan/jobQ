@@ -48,7 +48,7 @@ The above example is meant to highlight the flexibility of the lock. Many times 
 
 # Processing
 
-jobQ is built primary to be used on a environment such as Heroku where scaling is as easy as spinning up additional processes. Because of this, a Worker is not multithreaded and only hands a single job at a time. 
+A jobQ Worker only processes a single job at a time; however, there is no reason why an app can't spin up multiple Workers within a process.
 
 Processing jobs is simple to set up. Similar to the queue, it begins with initializing an instance of the Worker object. The same conviency method exists for creating a Worker with a redis URL.
 
@@ -75,9 +75,14 @@ worker.addHandler('reset', function (job, done) {
 });
 ```
 
-And finally, the worker needs to be started.
+And finally, the Worker needs to be started.
 ```javascript
 worker.start();
+```
+
+Also, a Worker can be stopped. `worker.stop` accepts an optional callback.
+```javascript
+worker.stop();
 ```
 
 ## Events
@@ -147,5 +152,3 @@ worker.on('error', function (desc, err) {
    // ... 
 });
 ```
-
-# Future Enhancements 
