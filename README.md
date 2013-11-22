@@ -1,3 +1,3 @@
-# Fannect Worker
+# jobQ
 
-Parallizable worker with locking functionality. Backed by Redis.
+Parallelizable worker with locking functionality written in Node. Backed by Redis.
