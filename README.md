@@ -13,7 +13,7 @@ npm install job-q
 
 # Queueing
 
-To start, a job `queue` must be initialized; either by newing up an instance of `jobQ.Queue` and passing in an already created redis client or by using the conviency method of `jobQ.createQueueWithUrl` which accepts a redis URL and a callback function. 
+Before queuing, a job `queue` must be initialized; either by newing up an instance of `jobQ.Queue` and passing in an already created redis client or by using the conviency method of `jobQ.createQueueWithUrl` which accepts a redis URL and a callback function. 
 
 ```javascript
 var jobQ = require('job-q');
@@ -44,13 +44,13 @@ queue.createLockingJob('reset', 'reset-blakevanlan@gmail.com', {
    // ...
 });
 ```
-Above is a very contrived example but is meant to highlight the flexibility of the lock. Many times it is useful to embed information in the lock to keep it from being overly broad (and blocking too many jobs without reason).
+The above example is meant to highlight the flexibility of the lock. Many times it is useful to embed information in the lock to keep it from being overly broad (and blocking too many jobs without reason).
 
 # Processing
 
-jobQ is built primary to be used on a environment such as Heroku where scaling is as easy as spinning up additional processes. Because of this, a worker is not multithreaded and only hands a single job at a time. 
+A jobQ Worker only processes a single job at a time; however, there is no reason why an app can't spin up multiple Workers within a process.
 
-Processes jobs is simple to set up with jobQ. Similar to the queue, it begins with initializing an instance of the Worker object. The same conviency method exists for creating a Worker with a redis URL.
+Processing jobs is simple to set up. Similar to the queue, it begins with initializing an instance of the Worker object. The same conviency method exists for creating a Worker with a redis URL.
 
 ```javascript
 var jobQ = require('job-q');
@@ -67,7 +67,7 @@ jobQ.createWorkerWithUrl('redis://...', function (err, worker) {
 });
 ```
 
-For a job to be processed, it must have a handler specificed so the worker knows what to do with it.
+For a job to be processed, it must have a handler specificed so the worker knows what to do.
 
 ```javascript
 worker.addHandler('reset', function (job, done) {
@@ -75,17 +75,22 @@ worker.addHandler('reset', function (job, done) {
 });
 ```
 
-And finally, the worker needs to be started.
+And finally, the Worker needs to be started.
 ```javascript
 worker.start();
 ```
 
+Also, a Worker can be stopped. `worker.stop` accepts an optional callback.
+```javascript
+worker.stop();
+```
+
 ## Events
 
-The worker object inherits from the EventEmitter. Here are the events it emits:
+The Worker object inherits from the EventEmitter. Here are the events it emits:
 
 ### start
-Emitted every time the worker starts.
+Emitted every time the Worker starts.
 ```javascript
 worker.on('start', function () {
    // ... 
@@ -93,7 +98,7 @@ worker.on('start', function () {
 ```
 
 ### active
-Emitted every time the worker goes from waiting to processing.
+Emitted every time the Worker goes from waiting to processing.
 ```javascript
 worker.on('active', function () {
    // ... 
@@ -101,7 +106,7 @@ worker.on('active', function () {
 ```
 
 ### waiting
-Emitted every time the worker finishes the last job and starts waiting.
+Emitted every time the Worker finishes the last job and starts waiting.
 ```javascript
 worker.on('waiting', function () {
    // ... 
@@ -109,7 +114,7 @@ worker.on('waiting', function () {
 ```
 
 ### stop
-Emitted every time the worker is stopped.
+Emitted every time the Worker is stopped.
 ```javascript
 worker.on('stop', function () {
    // ... 
@@ -117,7 +122,7 @@ worker.on('stop', function () {
 ```
 
 ### process
-Emitted before the worker begins to process a job.
+Emitted before the Worker begins to process a job.
 ```javascript
 worker.on('process', function (job) {
    // ... 
@@ -125,7 +130,7 @@ worker.on('process', function (job) {
 ```
 
 ### complete
-Emitted after the worker finishes processing a job.
+Emitted after the Worker finishes processing a job.
 ```javascript
 worker.on('complete', function (job) {
    // ... 
@@ -133,7 +138,7 @@ worker.on('complete', function (job) {
 ```
 
 ### job_error
-Emitted when the worker hits an error when processing a job. This can be because the job is invalid or because of an error within the job itself.
+Emitted when the Worker hits an error when processing a job. This can be because the job is invalid or because of an error within the job itself.
 ```javascript
 worker.on('job_error', function (err, job) {
    // ... 
@@ -141,10 +146,9 @@ worker.on('job_error', function (err, job) {
 ```
 
 ### error
-Emitted every time the worker hits an error, usually a connection error.
+Emitted every time the Worker hits an error, usually a connection error.
 ```javascript
 worker.on('error', function (desc, err) {
    // ... 
 });
 ```
-
