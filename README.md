@@ -1,7 +1,7 @@
 # jobQ
 
 jobQ is a parallelizable job queue with locking functionality; built with node.js + redis.
-This code is a genericized version of a project originally developed for the [Fannect](http://www.fannect.me) platform. The original repo contained sensitive information in previous check ins so a separated repo had to be created for this one (hence the single massive original commit).
+This code is a genericized version of a project originally developed for the [Fannect](http://www.fannect.me) platform. The original repo contained sensitive information in previous check ins so a separated repo had to be created for this one (hence the single massive original commit). A write up on the workings of this project can be found [here](http://vanlandingham.me/2013/11/23/blog-redis.html).
 
 At the time of creation, [Kue](https://github.com/LearnBoost/kue/), a far more feature rich job queue, did not support a way to ensure that certain jobs of the same type did not run in parallel. If this is not a use case for you, I highly recommend using Kue instead.
 
