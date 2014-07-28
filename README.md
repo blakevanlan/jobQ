@@ -1,9 +1,9 @@
 # jobQ
 
 jobQ is a parallelizable job queue with locking functionality; built with node.js + redis.
-This code is a genericized version of a project originally developed for the [Fannect](http://www.fannect.me) platform. That repo had sensitive information in previous check ins so a separated repo had to be created for this one (hence the single massive original commit).
+This code is a genericized version of a project originally developed for the [Fannect](http://www.fannect.me) platform. The original repo contained sensitive information in previous check ins so a separated repo had to be created for this one (hence the single massive original commit).
 
-At the time of creation, [Kue](https://github.com/LearnBoost/kue/), a far more feature rich job queue, did not support anyway to ensure that certain jobs of the same type did not run in parallel. If this isn't a use case for you then I highly recommend using Kue instead.
+At the time of creation, [Kue](https://github.com/LearnBoost/kue/), a far more feature rich job queue, did not support a way to ensure that certain jobs of the same type did not run in parallel. If this is not a use case for you, I highly recommend using Kue instead.
 
 Installation
 
@@ -13,7 +13,7 @@ npm install job-q
 
 # Queueing
 
-Before queuing, a job `queue` must be initialized; either by newing up an instance of `jobQ.Queue` and passing in an already created redis client or by using the conviency method of `jobQ.createQueueWithUrl` which accepts a redis URL and a callback function. 
+Before queuing, a job `queue` must be initialized; either by newing up an instance of `jobQ.Queue` and passing in a redis client or by using the conviency method, `jobQ.createQueueWithUrl`, which accepts a redis URL and a callback function. 
 
 ```javascript
 var jobQ = require('job-q');
@@ -30,7 +30,7 @@ jobQ.createQueueWithUrl('redis://...', function (err, queue) {
 });
 ```
 
-After a queue has been created adding a job is as straightforward as calling `queue.createJob(id, data, cb)` or `queue.createLockingJob(id, lock, data, cb)`.
+After a queue has been created, adding a job is as straightforward as calling `queue.createJob(id, data, cb)` or `queue.createLockingJob(id, lock, data, cb)`.
 ```javascript
 queue.createJob('reset', {
    email: 'blakevanlan@gmail.com'
